@@ -1,3 +1,10 @@
+## [0.1.3](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.2...v0.1.3) (2025-12-10)
+
+
+### Bug Fixes
+
+* now checks are also on uppercase resource names ([5de81c4](https://github.com/llw-RnD/longwave-terraform-git-hooks/commit/5de81c474820cf262730f032158864715c7792a4))
+
 ## [0.1.2](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.1...v0.1.2) (2025-12-10)
 
 
