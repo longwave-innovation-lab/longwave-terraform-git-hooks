@@ -65,6 +65,12 @@ class TestTerraformComments:
         assert "//" in error_text or "Use '#'" in error_text, "Should detect // comments"
         assert "/* */" in error_text or "Use '#'" in error_text, "Should detect /* */ comments"
 
+    def test_wildcard_permissions_ok(self):
+        """/* inside strings should pass."""
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "comments_string_ok.tf")
+        errors = check_terraform_comments(str(file_path))
+        assert len(errors) == 0, f"Expected no errors for /* in strings, got: {errors}"
+
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

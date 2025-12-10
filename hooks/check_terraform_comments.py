@@ -4,17 +4,21 @@ import sys
 
 def check_terraform_comments(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
+        content = f.read()
 
     errors = []
+    lines = content.split('\n')
 
     for i, line in enumerate(lines, 1):
-        # Check for // comments
-        if re.search(r'^\s*//', line):
+        # Remove strings to avoid false positives
+        line_without_strings = re.sub(r'"[^"]*"', '', line)
+
+        # Check for // comments (not in strings)
+        if re.search(r'^\s*//', line_without_strings):
             errors.append(f"{file_path}:{i}: Use '#' for comments, not '//'")
 
-        # Check for /* */ comments
-        if re.search(r'/\*', line):
+        # Check for /* */ comments (not in strings)
+        if re.search(r'/\*.*\*/', line_without_strings) or re.search(r'^\s*/\*', line_without_strings):
             errors.append(f"{file_path}:{i}: Use '#' for comments, not '/* */'")
 
     return errors
