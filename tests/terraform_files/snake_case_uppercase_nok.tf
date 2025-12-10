@@ -1,9 +1,9 @@
 # Here there should be a block where all the locals are defined
 locals {
-  my-local  = "example"
+  my_LOCAL  = "example"
 }
 
-resource "aws_iam_role" "my-role" {
+resource "aws_iam_role" "my_ROLE" {
   name = "example"
 
   assume_role_policy = <<EOF
@@ -23,21 +23,21 @@ resource "aws_iam_role" "my-role" {
 EOF
 }
 
-output "my-output" {
+output "my_OUTPUT" {
   value = aws_iam_role.my-role.arn
 }
 
-variable "my-variable" {
+variable "my_VARIABLE" {
   default     = "Something"
   type        = string
   description = "This is a description of the variable"
 }
 
-data "aws_iam_role" "my-data_role" {
+data "aws_iam_role" "my_DATA_ROLE" {
   name = "example-role"
 }
 
-module "my-module" {
+module "my_MODULE" {
   source = "git@github.com:example/example.git"
   name   = "example-module"
 }

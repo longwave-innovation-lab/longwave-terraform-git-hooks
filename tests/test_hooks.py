@@ -32,6 +32,19 @@ class TestTerraformNaming:
         assert "my-module" in errors[5], "Should detect 'my-module' as invalid"
         assert "kebab-case" in errors[0], "Error message should mention kebab-case"
 
+    def test_snake_case_uppercase_nok(self):
+        """Invalid kebab-case should fail."""
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "snake_case_uppercase_nok.tf")
+        errors = check_terraform_naming(str(file_path))
+        assert len(errors) > 0, "Expected errors for uppercase naming"
+        assert "my_ROLE" in errors[0], "Should detect 'my_ROLE' as invalid"
+        assert "my_DATA_ROLE" in errors[1], "Should detect 'my_DATA_ROLE' as invalid"
+        assert "my_OUTPUT" in errors[2], "Should detect 'my_OUTPUT' as invalid"
+        assert "my_VARIABLE" in errors[3], "Should detect 'my_VARIABLE' as invalid"
+        assert "my_LOCAL" in errors[4], "Should detect 'my_LOCAL' as invalid"
+        assert "my_MODULE" in errors[5], "Should detect 'my_MODULE' as invalid"
+        assert "uppercase" in errors[0], "Error message should mention uppercase"
+
 
 class TestTerraformComments:
     """Test check_terraform_comments hook."""
