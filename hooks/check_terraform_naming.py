@@ -13,18 +13,22 @@ def check_terraform_naming(file_path):
     for match in re.finditer(resource_pattern, content):
         block_type = match.group(1)
         name = match.group(2)
+        line_num = content[:match.start()].count('\n') + 1
         if '-' in name:
-            line_num = content[:match.start()].count('\n') + 1
             errors.append(f"{file_path}:{line_num}: {block_type} '{name}' uses kebab-case. Use snake_case instead.")
+        if any(c.isupper() for c in name):
+            errors.append(f"{file_path}:{line_num}: {block_type} '{name}' contains uppercase letters. Use snake_case instead.")
 
     # Check output/variable blocks
     single_name_pattern = r'(output|variable)\s+"([a-zA-Z0-9_-]+)"'
     for match in re.finditer(single_name_pattern, content):
         block_type = match.group(1)
         name = match.group(2)
+        line_num = content[:match.start()].count('\n') + 1
         if '-' in name:
-            line_num = content[:match.start()].count('\n') + 1
             errors.append(f"{file_path}:{line_num}: {block_type} '{name}' uses kebab-case. Use snake_case instead.")
+        if any(c.isupper() for c in name):
+            errors.append(f"{file_path}:{line_num}: {block_type} '{name}' contains uppercase letters. Use snake_case instead.")
 
     # Check locals block for variable names
     locals_pattern = r'locals\s*\{([^}]+)\}'
@@ -33,17 +37,21 @@ def check_terraform_naming(file_path):
         var_pattern = r'^\s*([a-zA-Z0-9_-]+)\s*='
         for var_match in re.finditer(var_pattern, locals_content, re.MULTILINE):
             var_name = var_match.group(1)
+            line_num = content[:match.start() + var_match.start()].count('\n') + 1
             if '-' in var_name:
-                line_num = content[:match.start() + var_match.start()].count('\n') + 1
                 errors.append(f"{file_path}:{line_num}: local '{var_name}' uses kebab-case. Use snake_case instead.")
+            if any(c.isupper() for c in var_name):
+                errors.append(f"{file_path}:{line_num}: local '{var_name}' contains uppercase letters. Use snake_case instead.")
 
     # Check module blocks (have one quoted string)
     module_pattern = r'module\s+"([a-zA-Z0-9_-]+)"'
     for match in re.finditer(module_pattern, content):
         name = match.group(1)
+        line_num = content[:match.start()].count('\n') + 1
         if '-' in name:
-            line_num = content[:match.start()].count('\n') + 1
             errors.append(f"{file_path}:{line_num}: module '{name}' uses kebab-case. Use snake_case instead.")
+        if any(c.isupper() for c in name):
+            errors.append(f"{file_path}:{line_num}: module '{name}' contains uppercase letters. Use snake_case instead.")
 
     return errors
 
