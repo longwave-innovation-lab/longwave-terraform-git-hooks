@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.3...v0.1.4) (2025-12-10)
+
+
+### Bug Fixes
+
+* wildcard in in arns should not trigger comment hook ([a9cdb0d](https://github.com/llw-RnD/longwave-terraform-git-hooks/commit/a9cdb0defe80c9ff54dc15c7ecfd093543674074))
+
 ## [0.1.3](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.2...v0.1.3) (2025-12-10)
 
 
