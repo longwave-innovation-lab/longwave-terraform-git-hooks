@@ -15,19 +15,11 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
 
-  # Test locale degli hooks di questa repository
   - repo: local
     hooks:
-      - id: terraform-naming
-        name: Check Terraform naming (snake_case)
-        entry: python hooks/check-terraform-naming.py
+      - id: pytest
+        name: Run pytest
+        entry: pytest
         language: system
-        files: \.tf$
-        pass_filenames: true
-
-      - id: terraform-comments
-        name: Check Terraform comments (use # not // or /* */)
-        entry: python hooks/check-terraform-comments.py
-        language: system
-        files: \.tf$
-        pass_filenames: true
+        pass_filenames: false
+        always_run: true

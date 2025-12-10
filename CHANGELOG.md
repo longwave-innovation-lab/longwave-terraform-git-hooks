@@ -15,4 +15,3 @@
 ### Features
 
 * created longwave precommit hooks repository ([c32fca1](https://github.com/llw-RnD/longwave-terraform-git-hooks/commit/c32fca1aa75a6ac23702a7bff704198718ec73d5))
-
