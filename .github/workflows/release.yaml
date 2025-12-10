@@ -14,11 +14,8 @@ on:
     branches:
     - main
     paths:
-    - '**.tf'
-    - '**.tfvars'
-    - '**.hcl'
-    - '.terraform.lock.hcl'
-    - 'package.json'
+    - '**.py'
+    - '**.yaml'
 # env:
 #   IMAGE_NAME: ${{ github.repository }}
 
