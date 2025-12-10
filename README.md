@@ -1,129 +1,154 @@
-# Longwave Terraform Template <!-- omit in toc -->
+# Longwave Git Hooks <!-- omit in toc -->
+
+Repository centralizzata per git hooks riutilizzabili nei progetti Longwave.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Intro](#intro)
-- [Using this as Git Template](#using-this-as-git-template)
-- [Development Setup](#development-setup)
-  - [Pre-commit Hooks](#pre-commit-hooks)
-- [Actions](#actions)
-  - [On Pull Requests](#on-pull-requests)
-  - [On Push](#on-push)
-- [Requirements](#requirements)
-- [Providers](#providers)
-- [Modules](#modules)
-- [Resources](#resources)
-- [Inputs](#inputs)
-- [Outputs](#outputs)
+- [Hooks Disponibili](#hooks-disponibili)
+  - [Terraform Naming Check](#terraform-naming-check)
+  - [Terraform Comments Check](#terraform-comments-check)
+- [Utilizzo](#utilizzo)
+  - [Prerequisiti](#prerequisiti)
+  - [Installazione](#installazione)
+  - [Configurazione](#configurazione)
+- [Sviluppo](#sviluppo)
+  - [Aggiungere Nuovi Hooks](#aggiungere-nuovi-hooks)
+  - [Testing](#testing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Intro
 
-Questo progetto è da usare come punto di partenza per creare un progetto o modulo terraform da zero.
+Questa repository contiene git hooks personalizzati per garantire qualità e coerenza del codice nei progetti Longwave.
 
-Usando questo template verrà configurato un progetto con:
+Gli hooks sono implementati come script Python e utilizzano il framework [pre-commit](https://pre-commit.com/) per l'integrazione nei repository.
 
-- Github Action per la generazione della documentazione Terraform automatica
-- Github Action per la generazione di versioni tramite taggin secondo gli standard [SEMVER](https://semver.org/lang/it/) partendo da [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-- Github Action per la creazione/aggiornamento automatico dell'indice `table-of-content`
-- Github hooks che controllano la conformità del codice prima del commit:
-  - Rimozione degli spazi inutili al termine delle righe
-  - [Aggiunge esattamente una linea vuota al termine di ogni file](https://stackoverflow.com/questions/729692/why-should-text-files-end-with-a-newline)
-  - Check se dei file di grandi dimensioni sono stati aggiunti alla repository
-  - Check sulla sintassi dei commit secondo lo standard [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-  - Formattazione sintassi Terraform tramite `terraform fmt -recursive`
-  - Validazione del codice tramite `terraform validate`
-  - Check sui nomi delle risorse in modo che seguano lo standard terraform `snake_case`
-  - Check sulla presenza solo di commenti single-line `#` invece dei deprecati multi-line`/* */`
+## Hooks Disponibili
 
-## Using this as Git Template
+### Terraform Naming Check
 
-**IMPORTANT!!!**
+**File:** `hooks/check-terraform-naming.py`
 
-IF you are using this repo as a template to create a new one, for a Terraform module, there are some changes to apply before proceeding to commit on the new Repo:
+Verifica che tutte le risorse Terraform seguano la convenzione `snake_case` invece di `kebab-case`.
 
-1. Delete completely the `CHANGELOG.md` file, to avoid wrong versions or description.
-2. Update the file `package.json` with the correct info about the starting version, or author or anything else.
+**Controlla:**
 
-## Development Setup
+- `resource`
+- `data`
+- `module`
+- `output`
+- `variable`
+- `locals`
 
-### Pre-commit Hooks
+**Esempio errore:**
 
-This repository uses pre-commit hooks to ensure code quality and consistency.
-
-**Prerequisites:**
-
-- Python >= 3.10 ([Download here](https://www.python.org/downloads/))
-
-**Setup (one-time per developer):**
-
-```bash
-# Install pre-commit (if not already installed)
-pip install pre-commit
-
-# Install the git hooks
-pre-commit install
+```text
+main.tf:10: resource 'my-bucket' uses kebab-case. Use snake_case instead.
 ```
 
-**What it does:**
+### Terraform Comments Check
 
-- Automatically formats Terraform code with `terraform fmt`
-- Validates Terraform syntax with `terraform validate`
+**File:** `hooks/check-terraform-comments.py`
 
-**Manual run (optional):**
+Verifica che i commenti Terraform utilizzino solo la sintassi `#` e non `//` o `/* */`.
+
+**Esempio errore:**
+
+```text
+main.tf:5: Use '#' for comments, not '//'
+```
+
+## Utilizzo
+
+### Prerequisiti
+
+- Python >= 3.10
+- Git
+
+### Installazione
+
+1. Installa pre-commit:
+
+   ```bash
+   pip install pre-commit
+   ```
+
+2. Nel tuo progetto, crea o aggiorna `.pre-commit-config.yaml`:
+
+   ```yaml
+   repos:
+     - repo: https://github.com/llw-RnD/longwave-terraform-git-hooks
+       rev: v1.0.0  # Usa l'ultima versione disponibile
+       hooks:
+         - id: terraform-naming
+         - id: terraform-comments
+   ```
+
+3. Installa gli hooks:
+
+   ```bash
+   pre-commit install
+   ```
+
+### Configurazione
+
+Gli hooks si attivano automaticamente ad ogni commit sui file `.tf`.
+
+Per eseguire manualmente su tutti i file:
 
 ```bash
 pre-commit run --all-files
 ```
 
-## Actions
+Per eseguire un hook specifico:
 
-### On Pull Requests
+```bash
+pre-commit run terraform-naming --all-files
+```
 
-When a `Pull Request` is opened or updated, an action to create or update the module's README is triggered.
+## Sviluppo
 
-Upon termination the action pushes the updated code the the same `Pull Request`, with a commed that doesn't trigger a new one.
+### Aggiungere Nuovi Hooks
 
-After the git push is done the code markdown linting is checked to check the syntax correctness.
+1. Crea lo script Python in `hooks/`:
 
-### On Push
+   ```python
+   #!/usr/bin/env python3
+   import sys
 
-When a `Push` is made to the `main` branch, an action to create a `tag`, a `release` and a `changelog` udpate is triggered.
+   def main():
+       # La tua logica qui
+       return 0
 
-<!-- BEGIN_TF_DOCS -->
-## Requirements
+   if __name__ == '__main__':
+       sys.exit(main())
+   ```
 
-| Name | Version |
-|------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
+2. Aggiungi l'hook in `.pre-commit-hooks.yaml`:
 
-## Providers
+   ```yaml
+   - id: my-new-hook
+     name: My New Hook
+     entry: hooks/my-new-hook.py
+     language: python
+     files: \\.tf$
+   ```
 
-| Name | Version |
-|------|---------|
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+3. Testa localmente prima di committare
 
-## Modules
+### Testing
 
-No modules.
+Per testare gli hooks localmente:
 
-## Resources
+```bash
+# Installa in modalità development
+pre-commit install
 
-| Name | Type |
-|------|------|
-| [random_id.example](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
-| [random_string.example_snake_case](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+# Testa su file specifici
+python hooks/check-terraform-naming.py path/to/file.tf
 
-## Inputs
-
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| <a name="input_aws_profile"></a> [aws\_profile](#input\_aws\_profile) | n/a | `string` | `"my-profile"` | no |
-| <a name="input_aws_region"></a> [aws\_region](#input\_aws\_region) | n/a | `string` | `"eu-south-1"` | no |
-
-## Outputs
-
-No outputs.
-<!-- END_TF_DOCS -->
+# Testa con pre-commit
+pre-commit run --all-files
+```

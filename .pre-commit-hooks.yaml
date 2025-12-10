@@ -1,0 +1,15 @@
+- id: terraform-naming
+  name: Check Terraform naming (snake_case)
+  description: Verifica che le risorse Terraform usino snake_case invece di kebab-case
+  entry: hooks/check-terraform-naming.py
+  language: python
+  files: \.tf$
+  pass_filenames: true
+
+- id: terraform-comments
+  name: Check Terraform comments (use # not // or /* */)
+  description: Verifica che i commenti Terraform usino solo la sintassi #
+  entry: hooks/check-terraform-comments.py
+  language: python
+  files: \.tf$
+  pass_filenames: true

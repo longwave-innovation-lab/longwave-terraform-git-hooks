@@ -1,32 +1,31 @@
-# Local .terraform directories
-**/.terraform/*
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
 
-# .tfstate files
-*.tfstate
-*.tfstate.*
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
-# Crash log files
-crash.log
-crash.*.log
+# OS
+.DS_Store
+Thumbs.db
 
-# Exclude all .tfvars files
-*.tfvars
-*.tfvars.json
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
 
-# Ignore override files
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
-# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-example: *tfplan*
-
-# Ignore CLI configuration files
-.terraformrc
-terraform.rc
-
-# Lock file (optional - remove this line if you want to commit it)
-.terraform.lock.hcl
-
-# Avoid to upload any zip file
-*.zip
+# Pre-commit
+.pre-commit-config.yaml.backup
