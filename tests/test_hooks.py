@@ -45,6 +45,12 @@ class TestTerraformNaming:
         assert "my_MODULE" in errors[5], "Should detect 'my_MODULE' as invalid"
         assert "uppercase" in errors[0], "Error message should mention uppercase"
 
+    def test_locals_with_values_ok(self):
+        """Locals with uppercase/special chars in values should pass."""
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "locals_with_map_ok.tf")
+        errors = check_terraform_naming(str(file_path))
+        assert len(errors) == 0, f"Expected no errors for locals with uppercase in values, got: {errors}"
+
 
 class TestTerraformComments:
     """Test check_terraform_comments hook."""
@@ -65,9 +71,9 @@ class TestTerraformComments:
         assert "//" in error_text or "Use '#'" in error_text, "Should detect // comments"
         assert "/* */" in error_text or "Use '#'" in error_text, "Should detect /* */ comments"
 
-    def test_wildcard_permissions_ok(self):
+    def test_wildcard_arn_ok(self):
         """/* inside strings should pass."""
-        file_path = os.path.join(TERRAFORM_FILES_DIR, "comments_string_ok.tf")
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "wildcard_arn_ok.tf")
         errors = check_terraform_comments(str(file_path))
         assert len(errors) == 0, f"Expected no errors for /* in strings, got: {errors}"
 

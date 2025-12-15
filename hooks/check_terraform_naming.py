@@ -1,57 +1,66 @@
 #!/usr/bin/env python3
-import re
+import hcl2
 import sys
 
 def check_terraform_naming(file_path):
-    with open(file_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-
     errors = []
 
-    # Check resource/data blocks (have two quoted strings)
-    resource_pattern = r'(resource|data)\s+"[^"]+"\s+"([a-zA-Z0-9_-]+)"'
-    for match in re.finditer(resource_pattern, content):
-        block_type = match.group(1)
-        name = match.group(2)
-        line_num = content[:match.start()].count('\n') + 1
-        if '-' in name:
-            errors.append(f"{file_path}:{line_num}: {block_type} '{name}' uses kebab-case. Use snake_case instead.")
-        if any(c.isupper() for c in name):
-            errors.append(f"{file_path}:{line_num}: {block_type} '{name}' contains uppercase letters. Use snake_case instead.")
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            parsed = hcl2.load(f)
+    except Exception:
+        return errors
 
-    # Check output/variable blocks
-    single_name_pattern = r'(output|variable)\s+"([a-zA-Z0-9_-]+)"'
-    for match in re.finditer(single_name_pattern, content):
-        block_type = match.group(1)
-        name = match.group(2)
-        line_num = content[:match.start()].count('\n') + 1
-        if '-' in name:
-            errors.append(f"{file_path}:{line_num}: {block_type} '{name}' uses kebab-case. Use snake_case instead.")
-        if any(c.isupper() for c in name):
-            errors.append(f"{file_path}:{line_num}: {block_type} '{name}' contains uppercase letters. Use snake_case instead.")
+    # Check resources: resource -> [{ resource_type: { resource_name: {...} } }]
+    for resource_block in parsed.get('resource', []):
+        for resource_type, resources in resource_block.items():
+            for name in resources.keys():
+                if '-' in name:
+                    errors.append(f"{file_path}: resource '{name}' uses kebab-case. Use snake_case instead.")
+                if any(c.isupper() for c in name):
+                    errors.append(f"{file_path}: resource '{name}' contains uppercase letters. Use snake_case instead.")
 
-    # Check locals block for variable names
-    locals_pattern = r'locals\s*\{([^}]+)\}'
-    for match in re.finditer(locals_pattern, content, re.DOTALL):
-        locals_content = match.group(1)
-        var_pattern = r'^\s*([a-zA-Z0-9_-]+)\s*='
-        for var_match in re.finditer(var_pattern, locals_content, re.MULTILINE):
-            var_name = var_match.group(1)
-            line_num = content[:match.start() + var_match.start()].count('\n') + 1
-            if '-' in var_name:
-                errors.append(f"{file_path}:{line_num}: local '{var_name}' uses kebab-case. Use snake_case instead.")
-            if any(c.isupper() for c in var_name):
-                errors.append(f"{file_path}:{line_num}: local '{var_name}' contains uppercase letters. Use snake_case instead.")
+    # Check data sources: data -> [{ data_type: { data_name: {...} } }]
+    for data_block in parsed.get('data', []):
+        for data_type, data_sources in data_block.items():
+            for name in data_sources.keys():
+                print(f"Data name {name}")
+                if '-' in name:
+                    errors.append(f"{file_path}: data '{name}' uses kebab-case. Use snake_case instead.")
+                if any(c.isupper() for c in name):
+                    errors.append(f"{file_path}: data '{name}' contains uppercase letters. Use snake_case instead.")
 
-    # Check module blocks (have one quoted string)
-    module_pattern = r'module\s+"([a-zA-Z0-9_-]+)"'
-    for match in re.finditer(module_pattern, content):
-        name = match.group(1)
-        line_num = content[:match.start()].count('\n') + 1
-        if '-' in name:
-            errors.append(f"{file_path}:{line_num}: module '{name}' uses kebab-case. Use snake_case instead.")
-        if any(c.isupper() for c in name):
-            errors.append(f"{file_path}:{line_num}: module '{name}' contains uppercase letters. Use snake_case instead.")
+    # Check outputs: output -> [{ output_name: {...} }]
+    for output in parsed.get('output', []):
+        for name in output.keys():
+            if '-' in name:
+                errors.append(f"{file_path}: output '{name}' uses kebab-case. Use snake_case instead.")
+            if any(c.isupper() for c in name):
+                errors.append(f"{file_path}: output '{name}' contains uppercase letters. Use snake_case instead.")
+
+    # Check variables: variable -> [{ variable_name: {...} }]
+    for variable in parsed.get('variable', []):
+        for name in variable.keys():
+            if '-' in name:
+                errors.append(f"{file_path}: variable '{name}' uses kebab-case. Use snake_case instead.")
+            if any(c.isupper() for c in name):
+                errors.append(f"{file_path}: variable '{name}' contains uppercase letters. Use snake_case instead.")
+
+    # Check locals: locals -> [{ local_name: value }]
+    for locals_block in parsed.get('locals', []):
+        for name in locals_block.keys():
+            if '-' in name:
+                errors.append(f"{file_path}: local '{name}' uses kebab-case. Use snake_case instead.")
+            if any(c.isupper() for c in name):
+                errors.append(f"{file_path}: local '{name}' contains uppercase letters. Use snake_case instead.")
+
+    # Check modules: module -> [{ module_name: {...} }]
+    for module in parsed.get('module', []):
+        for name in module.keys():
+            if '-' in name:
+                errors.append(f"{file_path}: module '{name}' uses kebab-case. Use snake_case instead.")
+            if any(c.isupper() for c in name):
+                errors.append(f"{file_path}: module '{name}' contains uppercase letters. Use snake_case instead.")
 
     return errors
 
