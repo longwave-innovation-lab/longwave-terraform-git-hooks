@@ -7,9 +7,17 @@
   pass_filenames: true
 
 - id: terraform-comments
-  name: Check Terraform comments (use # not // or /* */)
+  name: Check Terraform comments (use \# not // or /* */)
   description: Verifica che i commenti Terraform usino solo la sintassi #
   entry: check-terraform-comments
+  language: python
+  files: \.tf$
+  pass_filenames: true
+
+- id: terraform-locals-position
+  name: Check Terraform locals position (first block)
+  description: Verifica che il blocco locals sia il primo blocco nel file Terraform
+  entry: check-terraform-locals-position
   language: python
   files: \.tf$
   pass_filenames: true

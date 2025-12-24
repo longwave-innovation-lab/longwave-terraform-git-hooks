@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 from hooks.check_terraform_naming import check_terraform_naming
 from hooks.check_terraform_comments import check_terraform_comments
+from hooks.check_terraform_locals_position import check_terraform_locals_position
 
 TESTS_DIR = Path(__file__).parent
 TERRAFORM_FILES_DIR = os.path.join(TESTS_DIR, "terraform_files")
@@ -76,6 +77,30 @@ class TestTerraformComments:
         file_path = os.path.join(TERRAFORM_FILES_DIR, "wildcard_arn_ok.tf")
         errors = check_terraform_comments(str(file_path))
         assert len(errors) == 0, f"Expected no errors for /* in strings, got: {errors}"
+
+
+class TestTerraformLocalsPosition:
+    """Test check_terraform_locals_position hook."""
+
+    def test_locals_position_ok(self):
+        """Locals block as first block should pass."""
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "locals_position_ok.tf")
+        errors = check_terraform_locals_position(str(file_path))
+        assert len(errors) == 0, f"Expected no errors, got: {errors}"
+
+    def test_locals_position_nok(self):
+        """Locals block not as first block should fail."""
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "locals_position_nok.tf")
+        errors = check_terraform_locals_position(str(file_path))
+        assert len(errors) > 0, "Expected errors for locals not being first block"
+        assert "locals block must be the first block" in errors[0], "Should detect locals not being first"
+
+    def test_locals_multiple_blocks_nok(self):
+        """Multiple locals blocks should fail."""
+        file_path = os.path.join(TERRAFORM_FILES_DIR, "locals_multiple_blocks_nok.tf")
+        errors = check_terraform_locals_position(str(file_path))
+        assert len(errors) > 0, "Expected errors for multiple locals blocks"
+        assert "multiple locals blocks found, only one is allowed" in errors[0], "Should detect multiple locals blocks"
 
 
 if __name__ == "__main__":
