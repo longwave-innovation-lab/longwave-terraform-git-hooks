@@ -1,3 +1,10 @@
+## [0.2.0](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.5...v0.2.0) (2025-12-24)
+
+
+### Features
+
+* new test on locals block ([3df70ff](https://github.com/llw-RnD/longwave-terraform-git-hooks/commit/3df70ff0ee649620b1246933e16b904291273790))
+
 ## [0.1.5](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.4...v0.1.5) (2025-12-15)
 
 
@@ -25,11 +32,4 @@
 ### Bug Fixes
 
 * added action and pre-commit hook to test code ([a767fc6](https://github.com/llw-RnD/longwave-terraform-git-hooks/commit/a767fc66451de8e27d471842cc7147cd14cb4842))
-
-## [0.1.1](https://github.com/llw-RnD/longwave-terraform-git-hooks/compare/v0.1.0...v0.1.1) (2025-12-10)
-
-
-### Bug Fixes
-
-* now hooks are simple script instead of python ([8526526](https://github.com/llw-RnD/longwave-terraform-git-hooks/commit/852652681c8abf23780cea9a27ab77d4bcda70de))
 
