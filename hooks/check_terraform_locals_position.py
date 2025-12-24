@@ -11,7 +11,6 @@ def check_terraform_locals_position(file_path):
     except Exception:
         return errors
 
-    print("TEEEEEESTTTTT")
     # Remove comments and empty lines for analysis
     lines = content.split('\n')
     non_comment_lines = []
@@ -26,7 +25,6 @@ def check_terraform_locals_position(file_path):
 
     # Check if there are any locals blocks
     locals_blocks = [line for line in non_comment_lines if 'locals' in line and '{' in line]
-    print(f"locals blocks found: {locals_blocks}")
     has_locals = any(locals_blocks)
 
     if not has_locals:

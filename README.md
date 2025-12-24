@@ -9,6 +9,7 @@ Repository centralizzata per git hooks riutilizzabili nei progetti Longwave.
 - [Hooks Disponibili](#hooks-disponibili)
   - [Terraform Naming Check](#terraform-naming-check)
   - [Terraform Comments Check](#terraform-comments-check)
+  - [Terraform Locals Position Check](#terraform-locals-position-check)
 - [Utilizzo](#utilizzo)
   - [Prerequisiti](#prerequisiti)
   - [Installazione](#installazione)
@@ -60,6 +61,19 @@ Verifica che i commenti Terraform utilizzino solo la sintassi `#` e non `//` o `
 main.tf:5: Use '#' for comments, not '//'
 ```
 
+### Terraform Locals Position Check
+
+**File:** `hooks/check-terraform-comments.py`
+
+Verifica che i blocchi `locals` siano posti come primi blocchi nei file e che ve ne sia massimo 1.
+
+**Esempio errore:**
+
+```text
+main.tf:5: : multiple locals blocks found, only one is allowed
+main.tf:5: : locals block must be the first block in the file
+```
+
 ## Utilizzo
 
 ### Prerequisiti
@@ -84,6 +98,7 @@ main.tf:5: Use '#' for comments, not '//'
        hooks:
          - id: terraform-naming
          - id: terraform-comments
+         - id: terraform-locals-position
    ```
 
 3. Installa gli hooks:
