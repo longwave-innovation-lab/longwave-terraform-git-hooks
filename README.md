@@ -1,40 +1,40 @@
 # Longwave Git Hooks <!-- omit in toc -->
 
-Repository centralizzata per git hooks riutilizzabili nei progetti Longwave.
+Centralized repository for reusable git hooks in Longwave projects.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Intro](#intro)
-- [Hooks Disponibili](#hooks-disponibili)
+- [Available Hooks](#available-hooks)
   - [Terraform Naming Check](#terraform-naming-check)
   - [Terraform Comments Check](#terraform-comments-check)
   - [Terraform Locals Position Check](#terraform-locals-position-check)
-- [Utilizzo](#utilizzo)
-  - [Prerequisiti](#prerequisiti)
-  - [Installazione](#installazione)
-  - [Configurazione](#configurazione)
-- [Sviluppo](#sviluppo)
-  - [Aggiungere Nuovi Hooks](#aggiungere-nuovi-hooks)
+- [Usage](#usage)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+- [Development](#development)
+  - [Adding New Hooks](#adding-new-hooks)
   - [Testing](#testing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## Intro
 
-Questa repository contiene git hooks personalizzati per garantire qualità e coerenza del codice nei progetti Longwave.
+This repository contains custom git hooks to ensure code quality and consistency across Longwave projects.
 
-Gli hooks sono implementati come script Python e utilizzano il framework [pre-commit](https://pre-commit.com/) per l'integrazione nei repository.
+Hooks are implemented as Python scripts and use the [pre-commit](https://pre-commit.com/) framework for repository integration.
 
-## Hooks Disponibili
+## Available Hooks
 
 ### Terraform Naming Check
 
 **File:** `hooks/check-terraform-naming.py`
 
-Verifica che tutte le risorse Terraform seguano la convenzione `snake_case` invece di `kebab-case`.
+Validates that all Terraform resources follow `snake_case` naming convention instead of `kebab-case`.
 
-**Controlla:**
+**Checks:**
 
 - `resource`
 - `data`
@@ -43,7 +43,7 @@ Verifica che tutte le risorse Terraform seguano la convenzione `snake_case` inve
 - `variable`
 - `locals`
 
-**Esempio errore:**
+**Error example:**
 
 ```text
 main.tf:10: resource 'my-bucket' uses kebab-case. Use snake_case instead.
@@ -53,9 +53,9 @@ main.tf:10: resource 'my-bucket' uses kebab-case. Use snake_case instead.
 
 **File:** `hooks/check-terraform-comments.py`
 
-Verifica che i commenti Terraform utilizzino solo la sintassi `#` e non `//` o `/* */`.
+Validates that Terraform comments use only `#` syntax and not `//` or `/* */`.
 
-**Esempio errore:**
+**Error example:**
 
 ```text
 main.tf:5: Use '#' for comments, not '//'
@@ -65,83 +65,83 @@ main.tf:5: Use '#' for comments, not '//'
 
 **File:** `hooks/check-terraform-comments.py`
 
-Verifica che i blocchi `locals` siano posti come primi blocchi nei file e che ve ne sia massimo 1.
+Validates that `locals` blocks are placed as the first block in files and that there is only one per file.
 
-**Esempio errore:**
+**Error example:**
 
 ```text
 main.tf:5: : multiple locals blocks found, only one is allowed
 main.tf:5: : locals block must be the first block in the file
 ```
 
-## Utilizzo
+## Usage
 
-### Prerequisiti
+### Prerequisites
 
 - Python >= 3.10
 - Git
 
-### Installazione
+### Installation
 
-1. Installa pre-commit:
+1. Install pre-commit:
 
    ```bash
    pip install pre-commit
    ```
 
-2. Nel tuo progetto, crea o aggiorna `.pre-commit-config.yaml`:
+2. In your project, create or update `.pre-commit-config.yaml`:
 
    ```yaml
    repos:
-     - repo: https://github.com/llw-RnD/longwave-terraform-git-hooks
-       rev: v1.0.0  # Usa l'ultima versione disponibile
+     - repo: https://github.com/longwave-innovation-lab/longwave-terraform-git-hooks
+       rev: v0.2.0  # Use the latest available version
        hooks:
          - id: terraform-naming
          - id: terraform-comments
          - id: terraform-locals-position
    ```
 
-3. Installa gli hooks:
+3. Install the hooks:
 
    ```bash
    pre-commit install
    ```
 
-### Configurazione
+### Configuration
 
-Gli hooks si attivano automaticamente ad ogni commit sui file `.tf`.
+Hooks automatically run on every commit for `.tf` files.
 
-Per eseguire manualmente su tutti i file:
+To run manually on all files:
 
 ```bash
 pre-commit run --all-files
 ```
 
-Per eseguire un hook specifico:
+To run a specific hook:
 
 ```bash
 pre-commit run terraform-naming --all-files
 ```
 
-## Sviluppo
+## Development
 
-### Aggiungere Nuovi Hooks
+### Adding New Hooks
 
-1. Crea lo script Python in `hooks/`:
+1. Create the Python script in `hooks/`:
 
    ```python
    #!/usr/bin/env python3
    import sys
 
    def main():
-       # La tua logica qui
+       # Your logic here
        return 0
 
    if __name__ == '__main__':
        sys.exit(main())
    ```
 
-2. Aggiungi l'hook in `.pre-commit-hooks.yaml`:
+2. Add the hook to `.pre-commit-hooks.yaml`:
 
    ```yaml
    - id: my-new-hook
@@ -151,19 +151,19 @@ pre-commit run terraform-naming --all-files
      files: \\.tf$
    ```
 
-3. Testa localmente prima di committare
+3. Test locally before committing
 
 ### Testing
 
-Per testare gli hooks localmente:
+To test hooks locally:
 
 ```bash
-# Installa in modalità development
+# Install in development mode
 pre-commit install
 
-# Testa su file specifici
+# Test on specific files
 python hooks/check-terraform-naming.py path/to/file.tf
 
-# Testa con pre-commit
+# Test with pre-commit
 pre-commit run --all-files
 ```
